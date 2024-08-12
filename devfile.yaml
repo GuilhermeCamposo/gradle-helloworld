@@ -19,8 +19,8 @@ commands:
       component: "tools"
       workingDir: "${PROJECT_SOURCE}"
       commandLine: |
-        #if sdkman is present use it
-        [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk default java 21.0.2-tem
+        echo "setting Java 21 as Default"
+        sdk default java 21.0.2-tem
 events:
   postStart:
     - init-setup      
