@@ -20,6 +20,7 @@ commands:
       workingDir: "${PROJECT_SOURCE}"
       commandLine: |
         echo "setting Java 21 as Default"
+        [[ -s "/home/tooling/.sdkman/bin/sdkman-init.sh" ]] && source "/home/tooling/.sdkman/bin/sdkman-init.sh" && sdk default java 17.0.7-tem
 events:
   postStart:
     - init-setup      
