@@ -20,7 +20,6 @@ commands:
       workingDir: "${PROJECT_SOURCE}"
       commandLine: |
         echo "setting Java 21 as Default"
-        sdk default java 21.0.2-tem
 events:
   postStart:
     - init-setup      
