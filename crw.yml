@@ -1,0 +1,179 @@
+---
+apiVersion: workspace.devfile.io/v1alpha2
+kind: DevWorkspaceTemplate
+metadata:
+  annotations:
+    che.eclipse.org/components-update-policy: managed
+    che.eclipse.org/plugin-registry-url: che-incubator/che-code/latest
+  name: che-code-gradle-helloworld
+  namespace: admin-devspaces
+spec:
+  commands:
+    - apply:
+        component: che-code-injector
+      id: init-container-command
+    - exec:
+        commandLine: nohup /checode/entrypoint-volume.sh > /checode/entrypoint-logs.txt 2>&1 &
+        component: che-code-runtime-description
+      id: init-che-code-command
+  components:
+    - container:
+        cpuRequest: 30m
+        command:
+          - /entrypoint-init-container.sh
+        env:
+          - name: CHE_DASHBOARD_URL
+            value: 'https://devspaces.[[cluster-domain]]'
+          - name: CHE_PLUGIN_REGISTRY_URL
+            value: 'https://devspaces.[[cluster-domain]]/plugin-registry/v3'
+          - name: CHE_PLUGIN_REGISTRY_INTERNAL_URL
+            value: 'http://plugin-registry.openshift-devspaces.svc:8080/v3'
+          - name: CLUSTER_CONSOLE_URL
+            value: 'https://console-openshift-console.[[cluster-domain]]'
+          - name: CLUSTER_CONSOLE_TITLE
+            value: OpenShift console
+          - name: OPENVSX_REGISTRY_URL
+            value: ''
+        memoryRequest: 32Mi
+        sourceMapping: /projects
+        cpuLimit: 500m
+        volumeMounts:
+          - name: checode
+            path: /checode
+        memoryLimit: 256Mi
+        image: 'registry.redhat.io/devspaces/code-rhel8:latest'
+      name: che-code-injector
+    - attributes:
+        app.kubernetes.io/component: che-code-runtime
+        app.kubernetes.io/part-of: che-code.eclipse.org
+        controller.devfile.io/container-contribution: true
+      container:
+        cpuRequest: 30m
+        env:
+          - name: CHE_DASHBOARD_URL
+            value: 'https://devspaces.[[cluster-domain]]'
+          - name: CHE_PLUGIN_REGISTRY_URL
+            value: 'https://devspaces.[[cluster-domain]]/plugin-registry/v3'
+          - name: CHE_PLUGIN_REGISTRY_INTERNAL_URL
+            value: 'http://plugin-registry.openshift-devspaces.svc:8080/v3'
+          - name: CLUSTER_CONSOLE_URL
+            value: 'https://console-openshift-console.[[cluster-domain]]'
+          - name: CLUSTER_CONSOLE_TITLE
+            value: OpenShift console
+          - name: OPENVSX_REGISTRY_URL
+            value: ''
+        memoryRequest: 256Mi
+        sourceMapping: /projects
+        cpuLimit: 500m
+        volumeMounts:
+          - name: checode
+            path: /checode
+        memoryLimit: 1024Mi
+        image: 'registry.redhat.io/devspaces/udi-rhel8:latest'
+        endpoints:
+          - attributes:
+              cookiesAuthEnabled: true
+              discoverable: false
+              type: main
+              urlRewriteSupported: true
+            exposure: public
+            name: che-code
+            protocol: https
+            secure: true
+            targetPort: 3100
+          - attributes:
+              discoverable: false
+              urlRewriteSupported: false
+            exposure: public
+            name: code-redirect-1
+            protocol: https
+            targetPort: 13131
+          - attributes:
+              discoverable: false
+              urlRewriteSupported: false
+            exposure: public
+            name: code-redirect-2
+            protocol: https
+            targetPort: 13132
+          - attributes:
+              discoverable: false
+              urlRewriteSupported: false
+            exposure: public
+            name: code-redirect-3
+            protocol: https
+            targetPort: 13133
+      name: che-code-runtime-description
+    - name: checode
+      volume: {}
+  events:
+    postStart:
+      - init-che-code-command
+    preStart:
+      - init-container-command
+---
+apiVersion: workspace.devfile.io/v1alpha2
+kind: DevWorkspace
+metadata:
+  annotations:
+    che.eclipse.org/che-editor: che-incubator/che-code/latest
+    che.eclipse.org/devfile: |
+      schemaVersion: 2.1.0
+      metadata:
+        name: gradle-helloworld
+        namespace: admin-devspaces
+      components:
+        - name: tools
+          container:
+            image: quay.io/devfile/universal-developer-image:ubi8-latest
+            memoryRequest: 1Gi
+            memoryLimit: 3Gi
+            cpuLimit: 1000m
+            cpuRequest: 500m
+      projects:
+      attributes:
+        dw.metadata.annotations:
+          che.eclipse.org/devfile-source: |
+            scm:
+              repo: https://github.com/GuilhermeCamposo/gradle-helloworld.git
+              revision: main
+              fileName: devfile.yaml
+            factory:
+              params: >-
+                che-editor=che-incubator/che-code/latest&storageType=per-user&url=https://github.com/GuilhermeCamposo/gradle-helloworld/tree/main
+  name: gradle-helloworld
+  namespace: admin-devspaces
+spec:
+  contributions:
+    - kubernetes:
+        name: che-code-gradle-helloworld
+      name: editor
+  routingClass: che
+  started: true
+  template:
+    attributes:
+      controller.devfile.io/devworkspace-config:
+        name: devworkspace-config
+        namespace: openshift-devspaces
+      controller.devfile.io/scc: container-build
+      controller.devfile.io/storage-type: per-user
+      dw.metadata.annotations:
+        che.eclipse.org/devfile-source: |
+          scm:
+            repo: https://github.com/GuilhermeCamposo/gradle-helloworld.git
+            revision: main
+            fileName: devfile.yaml
+          factory:
+            params: >-
+              che-editor=che-incubator/che-code/latest&storageType=per-user&url=https://github.com/GuilhermeCamposo/gradle-helloworld/tree/main
+    components:
+      - container:
+          cpuLimit: 1000m
+          cpuRequest: 500m
+          image: 'quay.io/devfile/universal-developer-image:ubi8-latest'
+          memoryLimit: 3Gi
+          memoryRequest: 1Gi
+          sourceMapping: /projects
+        name: tools
+    projects: []
+
+

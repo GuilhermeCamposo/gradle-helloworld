@@ -9,3 +9,10 @@ components:
       memoryLimit: 3Gi
       cpuLimit: 1000m
       cpuRequest: 500m
+      env:
+        - name: JAVA_HOME
+          value: "$JAVA_HOME_21"
+        - name: PATH
+          value: "$JAVA_HOME:$PATH" 
+        - name: TEST_VAR
+          value: "this is a test variable"  
