@@ -1,3 +1,10 @@
 = Hello World Gradle
 
-Using Devfile from https://github.com/devfile/developer-images[] 
+Using Devfile from https://github.com/devfile/developer-images[]
+
+== Adding the sameple to the Dashboard
+
+----
+oc create configmap getting-started-samples --from-file=my-samples.json -n openshift-devspaces
+oc label configmap getting-started-samples app.kubernetes.io/part-of=che.eclipse.org app.kubernetes.io/component=getting-started-samples -n openshift-devspaces
+----
