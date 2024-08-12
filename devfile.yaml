@@ -12,7 +12,5 @@ components:
       env:
         - name: JAVA_HOME
           value: "$JAVA_HOME_21"
-        - name: PATH
-          value: "$JAVA_HOME:$PATH" 
         - name: TEST_VAR
           value: "this is a test variable"  
