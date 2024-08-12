@@ -10,7 +10,17 @@ components:
       cpuLimit: 1000m
       cpuRequest: 500m
       env:
-        - name: JAVA_HOME
-          value: "$JAVA_HOME_21"
         - name: TEST_VAR
           value: "this is a test variable"  
+commands:
+  - id: init-setup
+    exec:
+      label: '01: initial setup'
+      component: "tools"
+      workingDir: "${PROJECT_SOURCE}"
+      commandLine: |
+        #if sdkman is present use it
+        [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk default java 21.0.2-tem
+events:
+  postStart:
+    - init-setup      
