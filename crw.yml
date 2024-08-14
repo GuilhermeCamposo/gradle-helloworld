@@ -6,7 +6,7 @@ metadata:
     che.eclipse.org/components-update-policy: managed
     che.eclipse.org/plugin-registry-url: che-incubator/che-code/latest
   name: che-code-gradle-helloworld
-  namespace: admin-devspaces
+  namespace: [[user-namespace]]
 spec:
   commands:
     - apply:
@@ -120,7 +120,7 @@ metadata:
       schemaVersion: 2.1.0
       metadata:
         name: gradle-helloworld
-        namespace: admin-devspaces
+        namespace: [[user-namespace]]
       components:
         - name: tools
           container:
@@ -129,19 +129,8 @@ metadata:
             memoryLimit: 3Gi
             cpuLimit: 1000m
             cpuRequest: 500m
-      projects:
-      attributes:
-        dw.metadata.annotations:
-          che.eclipse.org/devfile-source: |
-            scm:
-              repo: https://github.com/GuilhermeCamposo/gradle-helloworld.git
-              revision: main
-              fileName: devfile.yaml
-            factory:
-              params: >-
-                che-editor=che-incubator/che-code/latest&storageType=per-user&url=https://github.com/GuilhermeCamposo/gradle-helloworld/tree/main
   name: gradle-helloworld
-  namespace: admin-devspaces
+  namespace: [[user-namespace]]
 spec:
   contributions:
     - kubernetes:
@@ -156,15 +145,6 @@ spec:
         namespace: openshift-devspaces
       controller.devfile.io/scc: container-build
       controller.devfile.io/storage-type: per-user
-      dw.metadata.annotations:
-        che.eclipse.org/devfile-source: |
-          scm:
-            repo: https://github.com/GuilhermeCamposo/gradle-helloworld.git
-            revision: main
-            fileName: devfile.yaml
-          factory:
-            params: >-
-              che-editor=che-incubator/che-code/latest&storageType=per-user&url=https://github.com/GuilhermeCamposo/gradle-helloworld/tree/main
     components:
       - container:
           cpuLimit: 1000m
